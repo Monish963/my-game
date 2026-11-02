@@ -1,0 +1,757 @@
+/* ==========================================================================
+   Space Strike - Neon Arcade Shooter Styling
+   Cyberpunk & Neon Aesthetic with Responsive Glassmorphic UI
+   ========================================================================== */
+
+:root {
+  --bg-space: #05060f;
+  --neon-cyan: #00f3ff;
+  --neon-cyan-glow: rgba(0, 243, 255, 0.45);
+  --neon-pink: #ff007f;
+  --neon-pink-glow: rgba(255, 0, 127, 0.45);
+  --neon-amber: #ffaa00;
+  --neon-amber-glow: rgba(255, 170, 0, 0.45);
+  --neon-green: #00ff66;
+  --neon-green-glow: rgba(0, 255, 102, 0.45);
+  --neon-blue: #0088ff;
+  --neon-blue-glow: rgba(0, 136, 255, 0.45);
+  --neon-purple: #b026ff;
+  --neon-purple-glow: rgba(176, 38, 255, 0.45);
+  --neon-gold: #ffd700;
+  --neon-gold-glow: rgba(255, 215, 0, 0.45);
+  --glass-bg: rgba(10, 15, 30, 0.85);
+  --glass-border: rgba(0, 243, 255, 0.25);
+  --text-main: #f0f6fc;
+  --text-muted: #8b9bb4;
+  --font-display: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
+  --font-mono: "Consolas", "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-space);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   Game Container & Canvas
+   -------------------------------------------------------------------------- */
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 600px;
+  max-height: 900px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #0c1024 0%, #05060f 100%);
+  box-shadow: 0 0 50px rgba(0, 243, 255, 0.15), 0 0 100px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+}
+
+@media (min-width: 600px) and (min-height: 900px) {
+  #game-container {
+    border-radius: 16px;
+    height: 94vh;
+  }
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+}
+
+/* Scanline overlay effect */
+#game-container::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 5;
+}
+
+/* --------------------------------------------------------------------------
+   Boss Warning Alert
+   -------------------------------------------------------------------------- */
+.boss-alert {
+  position: absolute;
+  top: 75px;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, rgba(255, 0, 127, 0) 0%, rgba(255, 0, 70, 0.75) 50%, rgba(255, 0, 127, 0) 100%);
+  padding: 10px 0;
+  text-align: center;
+  z-index: 25;
+  pointer-events: none;
+  animation: alert-pulse 0.8s infinite alternate ease-in-out;
+}
+
+.alert-glitch {
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f;
+}
+
+@keyframes alert-pulse {
+  0% { transform: scale(0.98); opacity: 0.7; }
+  100% { transform: scale(1.02); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   Heads-Up Display (HUD)
+   -------------------------------------------------------------------------- */
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+  background: linear-gradient(180deg, rgba(5, 6, 15, 0.88) 0%, rgba(5, 6, 15, 0) 100%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-label {
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan-glow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.hud-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px var(--neon-cyan-glow);
+  line-height: 1.1;
+}
+
+.lives-display {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.life-pip {
+  font-size: 1.05rem;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 6px rgba(255, 0, 100, 0.7));
+}
+
+.life-pip.lost {
+  opacity: 0.25;
+  filter: grayscale(1);
+  transform: scale(0.8);
+}
+
+/* Boss Health Bar in HUD */
+.boss-bar-container {
+  flex: 1;
+  max-width: 220px;
+  margin: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: opacity 0.3s ease;
+}
+
+.boss-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ff3366;
+  text-shadow: 0 0 8px var(--neon-pink-glow);
+}
+
+.boss-hp-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #ff007f;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--neon-pink-glow);
+}
+
+.boss-hp-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff007f, #ffaa00);
+  transition: width 0.15s ease-out;
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.icon-btn {
+  background: rgba(10, 15, 30, 0.7);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  color: var(--neon-cyan);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+}
+
+.icon-btn:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px var(--neon-cyan-glow);
+  transform: scale(1.08);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* --------------------------------------------------------------------------
+   Power-up Tray (Active Upgrades)
+   -------------------------------------------------------------------------- */
+.powerup-tray {
+  position: absolute;
+  top: 70px;
+  left: 18px;
+  display: flex;
+  gap: 8px;
+  z-index: 18;
+  pointer-events: none;
+}
+
+.power-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(10, 15, 30, 0.85);
+  border-radius: 14px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  border: 1px solid;
+  transition: all 0.3s ease;
+}
+
+.badge-purple {
+  border-color: var(--neon-purple);
+  color: #e099ff;
+  box-shadow: 0 0 8px var(--neon-purple-glow);
+}
+
+.badge-green {
+  border-color: var(--neon-green);
+  color: #88ffbb;
+  box-shadow: 0 0 8px var(--neon-green-glow);
+}
+
+.badge-blue {
+  border-color: var(--neon-blue);
+  color: #77c4ff;
+  box-shadow: 0 0 8px var(--neon-blue-glow);
+}
+
+.badge-gold {
+  border-color: var(--neon-gold);
+  color: #ffe680;
+  box-shadow: 0 0 10px var(--neon-gold-glow);
+  animation: pulse-gold 1.2s infinite alternate;
+}
+
+@keyframes pulse-gold {
+  0% { box-shadow: 0 0 6px var(--neon-gold-glow); }
+  100% { box-shadow: 0 0 14px rgba(255, 215, 0, 0.8); }
+}
+
+/* --------------------------------------------------------------------------
+   Overlays & Modal Cards (Start, Game Over, Pause)
+   -------------------------------------------------------------------------- */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(5, 6, 15, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  visibility: hidden;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.overlay-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 243, 255, 0.15);
+  border-radius: 20px;
+  padding: 26px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform: translateY(16px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.overlay.active .overlay-card {
+  transform: translateY(0) scale(1);
+}
+
+.danger-card {
+  border-color: rgba(255, 0, 127, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), 0 0 35px var(--neon-pink-glow);
+}
+
+.small-card {
+  max-width: 360px;
+  padding: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Typography & Glow Elements
+   -------------------------------------------------------------------------- */
+.glitch-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.game-title {
+  font-size: 2.3rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 15px var(--neon-cyan),
+    0 0 30px var(--neon-cyan),
+    0 0 50px var(--neon-cyan-glow);
+}
+
+.tagline {
+  font-size: 0.75rem;
+  letter-spacing: 5px;
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px var(--neon-pink-glow);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.mission-briefing p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.game-over-title {
+  font-size: 2.1rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #ff3366;
+  text-shadow:
+    0 0 10px #ff3366,
+    0 0 25px var(--neon-pink),
+    0 0 45px var(--neon-pink-glow);
+}
+
+.game-over-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--neon-amber);
+  font-family: var(--font-mono);
+  margin-top: -10px;
+}
+
+.pause-title {
+  font-size: 1.7rem;
+  letter-spacing: 3px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 15px var(--neon-cyan-glow);
+}
+
+.pause-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: #ffffff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   Power-Up Guide Card on Start Screen
+   -------------------------------------------------------------------------- */
+.powerup-guide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.guide-item strong {
+  color: #ffffff;
+  display: inline;
+}
+
+.drop-orb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.drop-green { background: var(--neon-green); color: var(--neon-green); }
+.drop-blue { background: var(--neon-blue); color: var(--neon-blue); }
+.drop-purple { background: var(--neon-purple); color: var(--neon-purple); }
+.drop-gold { background: var(--neon-gold); color: var(--neon-gold); }
+
+/* --------------------------------------------------------------------------
+   Controls & Hints Cards
+   -------------------------------------------------------------------------- */
+.control-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.hint-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.hint-card strong {
+  color: #ffffff;
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.hint-icon {
+  font-size: 1.2rem;
+}
+
+.menu-high-score {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.menu-high-score strong {
+  color: var(--neon-amber);
+  font-size: 1.1rem;
+  margin-left: 6px;
+  text-shadow: 0 0 10px var(--neon-amber-glow);
+}
+
+/* --------------------------------------------------------------------------
+   Game Over Stats Grid & Record Badge
+   -------------------------------------------------------------------------- */
+.badge-new-record {
+  background: linear-gradient(90deg, #ff007f, #ffaa00);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  align-self: center;
+  box-shadow: 0 0 16px rgba(255, 0, 127, 0.6);
+  animation: pulse-glow 1.5s infinite alternate;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 14px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-box.highlight .stat-value {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 15px var(--neon-cyan-glow);
+  font-size: 1.5rem;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Neon Buttons
+   -------------------------------------------------------------------------- */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.neon-btn {
+  position: relative;
+  width: 100%;
+  padding: 13px 22px;
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.15) 0%, rgba(0, 110, 255, 0.25) 100%);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 15px var(--neon-cyan-glow), inset 0 0 12px rgba(0, 243, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.neon-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.3) 0%, rgba(0, 110, 255, 0.4) 100%);
+  box-shadow: 0 0 25px var(--neon-cyan-glow), inset 0 0 20px rgba(0, 243, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.neon-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 10px var(--neon-cyan-glow);
+}
+
+.neon-btn-danger {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.2) 0%, rgba(200, 0, 70, 0.35) 100%);
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 18px var(--neon-pink-glow), inset 0 0 12px rgba(255, 0, 127, 0.25);
+}
+
+.neon-btn-danger:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.35) 0%, rgba(200, 0, 70, 0.5) 100%);
+  box-shadow: 0 0 28px var(--neon-pink-glow), inset 0 0 20px rgba(255, 0, 127, 0.4);
+}
+
+.neon-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  font-size: 0.85rem;
+  padding: 10px 16px;
+  color: var(--text-muted);
+}
+
+.neon-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Pulsing launch button animation */
+.neon-btn.pulse {
+  animation: button-pulse 2s infinite;
+}
+
+@keyframes button-pulse {
+  0% {
+    box-shadow: 0 0 15px var(--neon-cyan-glow), inset 0 0 10px rgba(0, 243, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 15px var(--neon-cyan-glow), inset 0 0 10px rgba(0, 243, 255, 0.2);
+  }
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(0.97); box-shadow: 0 0 10px var(--neon-pink-glow); }
+  100% { transform: scale(1.03); box-shadow: 0 0 25px var(--neon-pink-glow); }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Floating Touch Hint
+   -------------------------------------------------------------------------- */
+.touch-hint {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 243, 255, 0.15);
+  border: 1px dashed var(--neon-cyan);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: var(--neon-cyan);
+  pointer-events: none;
+  z-index: 15;
+  animation: fade-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.9; transform: translateX(-50%) translateY(-5px); }
+}
+
+/* --------------------------------------------------------------------------
+   Utility Classes
+   -------------------------------------------------------------------------- */
+.hidden {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 1.9rem;
+    letter-spacing: 3px;
+  }
+
+  .overlay-card {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .powerup-guide {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .stats-grid {
+    padding: 10px 6px;
+    gap: 4px;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .hud-value {
+    font-size: 1.2rem;
+  }
+
+  .boss-bar-container {
+    max-width: 140px;
+  }
+}

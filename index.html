@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Space Strike - Neon Arcade Shooter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Main Game Wrapper -->
+  <div id="game-container">
+    <!-- Canvas for game graphics -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Boss Warning Alert Banner -->
+    <div id="boss-alert" class="boss-alert hidden">
+      <div class="alert-glitch">⚠️ WARNING: BOSS APPROACHING ⚠️</div>
+    </div>
+
+    <!-- Top Heads-Up Display (HUD) -->
+    <header id="hud" class="hud hidden">
+      <div class="hud-left">
+        <div class="hud-item score-box">
+          <span class="hud-label">SCORE</span>
+          <span id="current-score" class="hud-value">0</span>
+        </div>
+        <!-- Lives Indicator -->
+        <div class="hud-item lives-box">
+          <span class="hud-label">LIVES</span>
+          <div id="lives-display" class="lives-display">
+            <span class="life-pip active">❤️</span>
+            <span class="life-pip active">❤️</span>
+            <span class="life-pip active">❤️</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boss HP Bar (Visible during boss fight) -->
+      <div id="boss-bar-container" class="boss-bar-container hidden">
+        <div class="boss-header">
+          <span id="boss-name" class="boss-name">MOTHERSHIP</span>
+          <span id="boss-hp-text" class="boss-hp-text">100%</span>
+        </div>
+        <div class="boss-hp-track">
+          <div id="boss-hp-fill" class="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="hud-item high-score-box">
+          <span class="hud-label">BEST</span>
+          <span id="hud-high-score" class="hud-value">0</span>
+        </div>
+        <button id="sound-btn" class="icon-btn" title="Toggle Sound (M)" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="pause-btn" class="icon-btn" title="Pause Game (P / Esc)" aria-label="Pause Game">
+          <span>⏸</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Active Power-up Badges Tray -->
+    <div id="powerup-tray" class="powerup-tray hidden">
+      <div id="badge-weapon" class="power-badge badge-purple" title="Weapon Level">
+        <span class="badge-icon">🟣</span>
+        <span id="badge-weapon-text" class="badge-text">SINGLE</span>
+      </div>
+      <div id="badge-firerate" class="power-badge badge-green" title="Fire Speed">
+        <span class="badge-icon">🟢</span>
+        <span id="badge-firerate-text" class="badge-text">SPD x1</span>
+      </div>
+      <div id="badge-speed" class="power-badge badge-blue" title="Movement Speed">
+        <span class="badge-icon">🔵</span>
+        <span id="badge-speed-text" class="badge-text">THRUST x1</span>
+      </div>
+      <div id="badge-shield" class="power-badge badge-gold hidden" title="Energy Shield Active">
+        <span class="badge-icon">🟡</span>
+        <span class="badge-text">SHIELD</span>
+      </div>
+    </div>
+
+    <!-- Start / Main Menu Overlay -->
+    <div id="start-screen" class="overlay active">
+      <div class="overlay-card">
+        <div class="glitch-title-wrapper">
+          <h1 class="game-title" data-text="SPACE STRIKE">SPACE STRIKE</h1>
+          <p class="tagline">NEON HYPERDRIVE SHOOTER</p>
+        </div>
+
+        <div class="mission-briefing">
+          <p>Pilot your combat interceptor, shoot down alien armadas, collect power drops, and defeat colossal motherships!</p>
+        </div>
+
+        <!-- Power-up Guide -->
+        <div class="powerup-guide">
+          <div class="guide-item">
+            <span class="drop-orb drop-green"></span>
+            <div><strong>Green Drop:</strong> Fire Speed Boost</div>
+          </div>
+          <div class="guide-item">
+            <span class="drop-orb drop-blue"></span>
+            <div><strong>Blue Drop:</strong> Flight Thrust Boost</div>
+          </div>
+          <div class="guide-item">
+            <span class="drop-orb drop-purple"></span>
+            <div><strong>Purple Drop:</strong> Double / Triple Cannons</div>
+          </div>
+          <div class="guide-item">
+            <span class="drop-orb drop-gold"></span>
+            <div><strong>Gold Drop:</strong> Shield & +1 Extra Life</div>
+          </div>
+        </div>
+
+        <div class="control-hints">
+          <div class="hint-card">
+            <span class="hint-icon">🔢</span>
+            <div>
+              <strong>Power Numbers:</strong>
+              <span>Objects display their HP/Power number. Blast them down to 0 to destroy them!</span>
+            </div>
+          </div>
+          <div class="hint-card">
+            <span class="hint-icon">⌨️</span>
+            <div>
+              <strong>Controls:</strong>
+              <span><kbd>A</kbd><kbd>D</kbd> or <kbd>←</kbd><kbd>→</kbd> or Mouse / Touch to steer. Fires upward automatically!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-high-score">
+          <span>ALL-TIME RECORD:</span>
+          <strong id="start-high-score">0</strong>
+        </div>
+
+        <button id="start-btn" class="neon-btn pulse">
+          <span class="btn-text">LAUNCH INTERCEPTOR</span>
+          <span class="btn-glow"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="game-over-screen" class="overlay">
+      <div class="overlay-card danger-card">
+        <h2 class="game-over-title">CRITICAL FAILURE</h2>
+        <p class="game-over-subtitle">HULL BREACH DETECTED</p>
+
+        <div id="new-high-score-badge" class="badge-new-record hidden">
+          ✨ NEW HIGH SCORE! ✨
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">ENEMIES DESTROYED</span>
+            <span id="final-kills" class="stat-value">0</span>
+          </div>
+          <div class="stat-box highlight">
+            <span class="stat-label">FINAL SCORE</span>
+            <span id="final-score" class="stat-value">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">HIGH SCORE</span>
+            <span id="gameover-high-score" class="stat-value">0</span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button id="restart-btn" class="neon-btn neon-btn-danger">
+            <span class="btn-text">REDEPLOY INTERCEPTOR</span>
+            <span class="btn-glow"></span>
+          </button>
+          <button id="main-menu-btn" class="neon-btn neon-btn-secondary">
+            <span class="btn-text">MAIN MENU</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pause-screen" class="overlay">
+      <div class="overlay-card small-card">
+        <h2 class="pause-title">MISSION PAUSED</h2>
+        <p class="pause-hint">Press <kbd>P</kbd>, <kbd>ESC</kbd>, or tap below to resume flight</p>
+        <button id="resume-btn" class="neon-btn">
+          <span class="btn-text">RESUME COMBAT</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Touch Control Indicator -->
+    <div id="touch-hint" class="touch-hint hidden">
+      Drag anywhere to steer ship
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
