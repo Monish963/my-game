@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://my-game-henna-nine.vercel.app/sitemap.xml
